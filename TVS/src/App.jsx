@@ -43,6 +43,7 @@ const App = () => {
           <Route
             path="/mfa-options"
             element={
+                // <MFAAuthOptions />
               <ProtectedRoute>
                 <MFAAuthOptions />
               </ProtectedRoute>

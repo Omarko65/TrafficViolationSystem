@@ -101,9 +101,17 @@ const ProfileSettings = () => {
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
       <div className="container mx-auto px-4 py-8 flex-grow">
-        <h2 className="justify-self-center text-2xl font-bold mb-6 text-blue-800">
-          Profile & Settings
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="text-2xl font-bold mb-6 text-blue-800">
+            Profile & Settings
+          </h2>
+          <a href="/mfa-options">
+            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+              Enable Mfa
+            </button>
+          </a>
+        </div>
+
         <AlertComponent
           open={alert.open}
           handleClose={handleClose}
@@ -199,7 +207,7 @@ const ProfileSettings = () => {
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             >
-              {loading? "Saving Changes...": "Save Changes"}
+              {loading ? "Saving Changes..." : "Save Changes"}
             </button>
           </form>
         </div>
