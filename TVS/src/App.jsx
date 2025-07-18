@@ -19,6 +19,7 @@ import ViolationTicket from "./pages/ViolationTicket";
 import OtpPage from "./pages/OtpPage";
 import { RoleProvider } from "./context/RoleContext";
 import RoleRoute from "./components/RoleRoute";
+import MFAOtpPage from "./pages/MFAOtpPage";
 
 
 function Logout() {
@@ -40,13 +41,14 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/mfa-authentication" element={<OtpPage />} />
           <Route path="/mfa-verification" element={<MFAVerification />} />
+          <Route path="/mfa-otp" element={<MFAOtpPage />} />
           <Route
             path="/mfa-options"
             element={
-                // <MFAAuthOptions />
-              <ProtectedRoute>
-                <MFAAuthOptions />
-              </ProtectedRoute>
+              <MFAAuthOptions />
+              // <ProtectedRoute>
+              //   <MFAAuthOptions />
+              // </ProtectedRoute>
             }
           />
           <Route

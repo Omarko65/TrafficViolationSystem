@@ -5,9 +5,9 @@ import { LockClosedIcon } from '@heroicons/react/24/outline';
 import logo from '../assets/frsc-logo.png';
 import AlertComponent from '../components/Utils/AlertComponent';
 import { useNavigate } from 'react-router-dom';
+import { useLocation} from 'react-router-dom';
 import api from '../api';
 import Spinner from '../components/Utils/Spinner';
-
 
 const OtpPage = () => {
   const [loading, setLoading] = useState(false);
@@ -18,6 +18,8 @@ const OtpPage = () => {
     message: "",
     severity: "info",
   });
+    const location = useLocation();
+    const id = location.state;
 
   const handleClose = () => {
     setAlert({ ...alert, open: false });
@@ -65,6 +67,16 @@ const OtpPage = () => {
       }
     } finally {
       setLoading(false);
+    }
+  }
+
+  const mfaApp = async () => {
+    const res = await api.get("/api/user/");
+    console.log(res.data)
+    if (res.data.mfa_enabled === false) {
+      navigate("/mfa-options", {state: id});
+    } else {
+      navigate("/mfa-otp", { state: id });
     }
   }
   return (
@@ -117,6 +129,15 @@ const OtpPage = () => {
               )}
             </button>
           </form>
+          <div className="justify-self-center mb-4 text-sm text-gray-600">
+            <span className="font-bold">or</span>
+          </div>
+            <button
+              onClick={mfaApp}
+              className="w-full bg-frsc-yellow text-frsc-blue py-2 rounded-md hover:bg-yellow-400 flex items-center justify-center"
+            >
+              Login with MFA Authenticator
+            </button>
         </div>
       </div>
       <Footer />

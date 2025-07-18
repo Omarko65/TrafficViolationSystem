@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Utils/Spinner';
+import { useLocation} from 'react-router-dom';
 import AlertComponent from '../components/Utils/AlertComponent';
 import api from '../api';
 
 const ProfileSettings = () => {
   const [loading, setLoading] = useState(false);
-  const [id, setId] = useState("")
+  const [userid, setId] = useState("")
   const [newpassword, setNewPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("")
   const [phonenumber, setPhoneNumber] = useState("");
+  const location = useLocation();
+  const id = location.state;
+  const navigate = useNavigate();
   const [alert, setAlert] = useState({
       open: false,
       message: "",
@@ -29,7 +34,7 @@ const ProfileSettings = () => {
       e.preventDefault()
       try {
         const payload = {};
-        if (id) payload.officer_id = id;
+        if (userid) payload.officer_id = userid;
         if (email) payload.email = email;
         if (phonenumber) payload.phone_number = phonenumber;
         if (role) payload.role = role;
@@ -97,6 +102,20 @@ const ProfileSettings = () => {
       }
     }
 
+    const mfabutton = async () => {
+      const res = await api.get("/api/user/");
+      console.log(res.data)
+      if (res.data.mfa_enabled === false) {
+        navigate("/mfa-options", { state: res.data.id });
+      } else {
+        setAlert({
+          open: true,
+          message: "MFA Already Enabled",
+          severity: "info",
+        });
+      }
+    };
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
@@ -105,11 +124,9 @@ const ProfileSettings = () => {
           <h2 className="text-2xl font-bold mb-6 text-blue-800">
             Profile & Settings
           </h2>
-          <a href="/mfa-options">
-            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
-              Enable Mfa
+            <button onClick={mfabutton} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+              Enable MFA
             </button>
-          </a>
         </div>
 
         <AlertComponent
@@ -130,8 +147,8 @@ const ProfileSettings = () => {
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 type="text"
-                name="id"
-                value={id}
+                name="userid"
+                value={userid}
                 onChange={(e) => setId(e.target.value)}
                 placeholder="e.g., FRSC123456"
                 required

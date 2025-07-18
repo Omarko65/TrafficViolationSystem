@@ -40,13 +40,11 @@ const MFAVerification = () => {
       if (res.status === 200) {
         const access = localStorage.getItem(TEMP_ACCESS_TOKEN);
         const refresh = localStorage.getItem(TEMP_REFRESH_TOKEN);
+        localStorage.clear()
         localStorage.setItem(ACCESS_TOKEN, access);
         localStorage.setItem(REFRESH_TOKEN, refresh);
         const userrole = await api.get("/api/user/");
-        localStorage.removeItem(USER_ROLE);
         localStorage.setItem(USER_ROLE, userrole.data.role);
-        localStorage.removeItem(TEMP_ACCESS_TOKEN);
-        localStorage.removeItem(TEMP_REFRESH_TOKEN);
         if (userrole.data.role === 'ADMIN') {
           navigate("/admin-dashboard")
         } else {

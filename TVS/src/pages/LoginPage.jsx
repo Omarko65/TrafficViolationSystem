@@ -36,7 +36,7 @@ const LoginPage = () => {
       localStorage.clear();
       localStorage.setItem(TEMP_ACCESS_TOKEN, res.data.access);
       localStorage.setItem(TEMP_REFRESH_TOKEN, res.data.refresh);
-      navigate("/mfa-authentication");
+      navigate("/mfa-authentication", { state: id });
       // localStorage.setItem(ACCESS_TOKEN, res.data.access);
       // localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
       // const userrole = await api.get("/api/user/");
