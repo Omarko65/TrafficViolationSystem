@@ -20,11 +20,15 @@ frozenlist==1.5.0
 gunicorn==23.0.0
 idna==3.10
 multidict==6.1.0
+packaging==25.0
 pillow==10.4.0
 propcache==0.2.0
 psycopg2-binary==2.9.10
 PyJWT==2.9.0
+pyotp==2.9.0
+pypng==0.20220715.0
 python-dotenv==1.0.1
+qrcode==7.4.2
 requests==2.32.4
 six==1.17.0
 sqlparse==0.5.3

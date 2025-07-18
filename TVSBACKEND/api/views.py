@@ -2,6 +2,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 import datetime as dt
 import random
+import pyotp
+import io
+import qrcode
+import base64
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.exceptions import NotFound
@@ -17,6 +21,14 @@ from .mixins import MessageHandler
 from .utils import mask_phone
 
 
+
+def verify_2fa_otp(user, otp):
+    totp=pyotp.TOTP(user.mfa_secret)
+    if totp.verify(otp):
+        user.mfa_enabled=True
+        user.save()
+        return True
+    return False
 '''
 User Views => Create user view
 '''
@@ -33,8 +45,11 @@ class GetCurrentUserView(APIView):
 
     def get(self, request):
         user = request.user
+        officer=Profile.objects.get(user=user)
         serializer = RegisterSerializer(user)
-        return Response(serializer.data)
+        data = serializer.data.copy()
+        data['mfa_enabled'] = officer.mfa_enabled
+        return Response(data)
     
 
 @api_view(["PUT", "PATCH"])
@@ -112,6 +127,46 @@ def otp_verify(request):
                         status=status.HTTP_200_OK)
         
         return Response({"detail": "Wrong OTP"},
+                    status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+@api_view(['GET', 'POST']) 
+@permission_classes([IsAuthenticated])
+def mfa_login(request):
+    officer = request.user
+    user=Profile.objects.get(user=officer)
+    if not user.mfa_secret:
+        user.mfa_secret=pyotp.random_base32()
+        user.save()
+    otp_url = pyotp.totp.TOTP(user.mfa_secret).provisioning_uri(
+        name=officer.email,
+        issuer_name=officer.name
+    )
+    qr = qrcode.make(otp_url)
+    buffer = io.BytesIO()
+    qr.save(buffer, format="PNG")
+
+    buffer.seek(0)
+    qr_code = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+    qr_code_data_url = f"data:image/png;base64,{qr_code}"
+    return Response({"qrcode": qr_code_data_url},
+                        status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def verify_mfa(request):
+    otp = request.data.get('otp_code')
+    id = request.data.get('officer_id')
+    officer = Officer.objects.get(id=id)
+    user=Profile.objects.get(user=officer)
+    if verify_2fa_otp(user, otp):
+        return Response({"qrcode":"MFA verified successfully!"},
+                        status=status.HTTP_200_OK)
+    return Response({"detail": "Wrong OTP"},
                     status=status.HTTP_400_BAD_REQUEST)
     
 

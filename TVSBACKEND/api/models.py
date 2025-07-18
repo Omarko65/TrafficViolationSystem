@@ -87,3 +87,5 @@ class Profile(models.Model):
     phone_number=models.CharField(max_length=15)
     otp=models.CharField(max_length=100,null=True,blank=True)
     uid=models.CharField(default=f'{uuid.uuid4()}',max_length=200)
+    mfa_secret=models.CharField(max_length=64, blank=True, null=True)
+    mfa_enabled=models.BooleanField(default=False)
