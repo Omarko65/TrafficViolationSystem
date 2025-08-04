@@ -15,7 +15,7 @@ class MessageHandler:
         client = Client(settings.ACCOUNT_SID,settings.AUTH_TOKEN)
         message = client.messages.create(
             body=f'Your otp is: {self.otp}',
-            from_='+12566734429',
+            from_='+15138483495',
             to=self.phone_number
         )
         print(message.sid)
