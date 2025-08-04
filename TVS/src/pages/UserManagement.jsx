@@ -41,7 +41,7 @@ const UserManagement = () => {
         console.log(res.data);
         setAlert({
           open: true,
-          message: `Successfully Registered officer!. Officer ID => ${res.data['id']}. Message disappearing soon`,
+          message: `Successfully Registered officer!. Officer ID => FRSC${res.data['id']}. Message disappearing soon`,
           severity: "success",
         });
         setTimeout(() => {
