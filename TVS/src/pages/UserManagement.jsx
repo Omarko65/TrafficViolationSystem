@@ -13,6 +13,7 @@ const UserManagement = () => {
   const [email, setEmail] = useState("")
   const [phone_number, setPhoneNumber] = useState(0);
   const [role, setRole] = useState("")
+  const [photo, setFaceID] = useState(null);
   const [password, setPassword] = useState("");
   const navigate = useNavigate()
   const [alert, setAlert] = useState({
@@ -28,13 +29,20 @@ const UserManagement = () => {
   const handleSubmit = async(e) => {
     setLoading(true)
     e.preventDefault()
+    const formData = new FormData();
+    formData.append("name", name)
+    formData.append("email", email)
+    formData.append("phone_number", phone_number)
+    formData.append("role", role)
+    formData.append("password", password);
+    if (photo) {
+      formData.append("photo", photo)
+    }
     try {
-      const res = await api.post("/api/user/register/", {
-        name: name,
-        email: email,
-        phone_number: phone_number,
-        role: role,
-        password: password,
+      const res = await api.post("/api/user/register/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       localStorage.clear();
       if (res.status === 201) {
@@ -166,19 +174,21 @@ const UserManagement = () => {
                   <option value="ADMIN">Admin</option>
                 </select>
               </div>
-              {/* <div className="sm:col-span-2">
+
+              <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Biometric Data
+                  Passport Photo
                 </label>
                 <input
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-frsc-yellow"
+                  name="photo"
                   type="file"
                   accept="image/*"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                  onChange={(e) => setFaceID(e.target.files[0])}
+                  required
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Upload fingerprint or facial image
-                </p>
-              </div> */}
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700">
                   Password

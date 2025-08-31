@@ -14,6 +14,7 @@ const ProfileSettings = () => {
   const [confirmpassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("")
+  const [photo, setFaceID] = useState(null);
   const [phonenumber, setPhoneNumber] = useState("");
   const location = useLocation();
   const id = location.state;
@@ -38,6 +39,7 @@ const ProfileSettings = () => {
         if (email) payload.email = email;
         if (phonenumber) payload.phone_number = phonenumber;
         if (role) payload.role = role;
+        if (photo) payload.photo = photo;
         if (
           (newpassword && !confirmpassword) ||
           (!newpassword && confirmpassword)
@@ -61,7 +63,11 @@ const ProfileSettings = () => {
           payload.password = newpassword;
         }
         console.log(payload)
-        const res = await api.put("/api/officer/update/", payload);
+        const res = await api.put("/api/officer/update/", payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         if (res.status === 200) {
           console.log(res.data);
           setAlert({
@@ -124,9 +130,12 @@ const ProfileSettings = () => {
           <h2 className="text-2xl font-bold mb-6 text-blue-800">
             Profile & Settings
           </h2>
-            <button onClick={mfabutton} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
-              Enable MFA
-            </button>
+          <button
+            onClick={mfabutton}
+            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+          >
+            Enable MFA
+          </button>
         </div>
 
         <AlertComponent
@@ -218,6 +227,19 @@ const ProfileSettings = () => {
                 value={phonenumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="e.g., +2341234567890"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1 text-gray-700">
+                Passport Photo
+              </label>
+              <input
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-frsc-yellow"
+                name="photo"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFaceID(e.target.files[0])}
+                required
               />
             </div>
             <button

@@ -32,18 +32,21 @@ const MFAOtpPage = () => {
         const res = await api.post(`/api/mfaverify/`, { otp_code: otp, officer_id: id });
 
         if (res.status === 200) {
-          const access = localStorage.getItem(TEMP_ACCESS_TOKEN);
-          const refresh = localStorage.getItem(TEMP_REFRESH_TOKEN);
-          localStorage.clear()
-          localStorage.setItem(ACCESS_TOKEN, access);
-          localStorage.setItem(REFRESH_TOKEN, refresh);
-          const userrole = await api.get("/api/user/");
-          localStorage.setItem(USER_ROLE, userrole.data.role);
-          if (userrole.data.role === "ADMIN") {
-            navigate("/admin-dashboard");
-          } else {
-            navigate("/officer-dashboard");
-          }
+          navigate("/faceid");
+
+
+          // const access = localStorage.getItem(TEMP_ACCESS_TOKEN);
+          // const refresh = localStorage.getItem(TEMP_REFRESH_TOKEN);
+          // localStorage.clear()
+          // localStorage.setItem(ACCESS_TOKEN, access);
+          // localStorage.setItem(REFRESH_TOKEN, refresh);
+          // const userrole = await api.get("/api/user/");
+          // localStorage.setItem(USER_ROLE, userrole.data.role);
+          // if (userrole.data.role === "ADMIN") {
+          //   navigate("/admin-dashboard");
+          // } else {
+          //   navigate("/officer-dashboard");
+          // }
         }
       } catch (error) {
         if (error.response) {

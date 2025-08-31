@@ -20,6 +20,7 @@ import OtpPage from "./pages/OtpPage";
 import { RoleProvider } from "./context/RoleContext";
 import RoleRoute from "./components/RoleRoute";
 import MFAOtpPage from "./pages/MFAOtpPage";
+import FaceRecognition from "./pages/FaceRecognition";
 
 
 function Logout() {
@@ -37,6 +38,7 @@ const App = () => {
       <RoleProvider>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/faceid" element={<FaceRecognition />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/mfa-authentication" element={<OtpPage />} />
