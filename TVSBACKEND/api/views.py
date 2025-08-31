@@ -6,6 +6,7 @@ import pyotp
 import io
 import qrcode
 import base64
+import os
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.exceptions import NotFound
@@ -15,10 +16,12 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
 from django.db.models import Q, Count
+from django.http import JsonResponse
+from django.conf import settings as django_settings
 from .serializers import RegisterSerializer, ViolationSerializer
 from .models import Officer, Violation, Profile
 from .mixins import MessageHandler
-from .utils import mask_phone
+from .utils import mask_phone, classify_face
 
 
 
@@ -279,3 +282,35 @@ class ViolationDelete(generics.DestroyAPIView):
     queryset = Violation.objects.all()
     serializer_class = ViolationSerializer
     permission_classes = [IsAuthenticated]
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def face_id(request):
+    photo = request.POST.get('photo')
+
+    # try:
+    imagepath = os.path.join(django_settings.UPLOAD_ROOT,'upload.png')
+    decode = open(imagepath, 'wb')  
+    decode.write(base64.b64decode(photo))  
+    decode.close()
+    res = classify_face(imagepath)
+    if res:
+        print('res found')
+        user_exists = Officer.objects.filter(id=res).exists()
+        if user_exists:
+            print('user found')
+            user=Officer.objects.get(id=res)
+            officer = request.user
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
+            if user.id == officer.id:
+                return JsonResponse({'success': True}, status=200)
+            else:
+                return JsonResponse({'success': False, 'msg': 'User Not Found'}, status=404)
+        if os.path.exists(imagepath):
+            os.remove(imagepath)
+            
+        return JsonResponse({'success': False, 'msg': 'User Not Found'}, status=404)
+    if os.path.exists(imagepath):
+        os.remove(imagepath)
+    return JsonResponse({'success': False, 'msg': 'Res Not Found'}, status=404)

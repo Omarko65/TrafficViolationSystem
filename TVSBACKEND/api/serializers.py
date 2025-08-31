@@ -11,7 +11,7 @@ Officer = get_user_model()
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Officer
-        fields = ['id', 'name', 'email', 'phone_number', 'role', 'password']
+        fields = ['id', 'name', 'email', 'phone_number', 'role', 'photo', 'password']
         extra_kwargs = {
             'password': {'write_only': True},
             'id': {'read_only': True},

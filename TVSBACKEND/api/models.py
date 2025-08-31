@@ -33,6 +33,7 @@ class Officer(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='Officer')
     is_staff = models.BooleanField(default=False)
+    photo = models.ImageField(upload_to='images', null=True, blank=True)
     USERNAME_FIELD = 'id'
 
     objects = OfficerManager()

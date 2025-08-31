@@ -16,4 +16,5 @@ urlpatterns = [
     path('officer/update/', views.update_officer, name='update_officer'),
     path('mfalogin/', views.mfa_login, name='mfalogin'),
     path('mfaverify/', views.verify_mfa, name='mfaverify'),
+    path('faceid/', views.face_id, name='faceid'),
 ]
